@@ -38,15 +38,27 @@ Modified by          Date              Description
 #include "Arduino.h"
 #include "ledmx.h"
 
+// LMXSHILELD pin mapping
+#define LMXSHIELD_RD                    8
+#define LMXSHIELD_WR                    7
+#define LMXSHIELD_DATA                  6
+#define LMXSHIELD_EN                    5
+#define LMXSHIELD_AD2                   4
+#define LMXSHIELD_AD1                   3
+#define LMXSHIELD_AD0                   2
+#define LMXSHIELD_CSTYPE                LEDMX_CSTYPE_BIN
+
+
 #define LEDMX_MAX_ADDRPIN		4
 
 typedef struct _LedMxIOCfg {
   int WrPin;				// WR pin map GPIO pin #
   int RdPin;				// RD pin map GPIO pin #
   int DataPin;				// DATA pin map GPIO pin #
-  //int EnPin;				// Decoder enable pin map GPIO pin #
+  int EnPin;				// Decoder enable pin map GPIO pin #
   int CsPins[LEDMX_MAX_ADDRPIN];	// CS pins map GPIO pin #s
   int NbCsPins;				// Total number of CS pins used
+  LEDMX_CSTYPE CsType;
 } LEDMXIOCFG;
 
 #endif /* __LEDMXIO_H__ */

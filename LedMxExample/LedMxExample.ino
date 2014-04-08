@@ -2,17 +2,19 @@
 
 // I/O pins connection
 LEDMXIOCFG g_IOCfg = { 
-  2,  // WR pin 
-  3,  // RD pin
-  4,  // Data pin
-  { 5, 6, 7, 8,}, // CS pins
-  4  // Number of CS pins 
+  LMXSHIELD_WR,  // WR pin 
+  LMXSHIELD_RD,  // RD pin
+  LMXSHIELD_DATA,  // Data pin
+  LMXSHIELD_EN, // En pin
+  { LMXSHIELD_AD0, LMXSHIELD_AD1, LMXSHIELD_AD2, -1,}, // CS pins
+  3,  // Number of CS pins 
+  LMXSHIELD_CSTYPE
 };
 
 // Display board configuration
 LEDMXCFG g_Cfg = {
   &g_IOCfg,
-  4,  // Number of display board in daisy chain 
+  8,  // Number of display board in daisy chain 
   {0, 1, 2, 3, 4, 5, 6, 7}, // display board ordering
 };
 

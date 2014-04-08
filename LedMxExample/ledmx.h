@@ -77,6 +77,11 @@ typedef enum {
 	LEDMXPRTMODE_SCROLLRIGHT
 } LEDMXPRTMODE;
 
+// CS mapping type
+typedef enum {
+  LEDMX_CSTYPE_GPIO, 		// Direct map to GPIO pin
+  LEDMX_CSTYPE_BIN		// Through a binary decoder, i.e. using 74AHCT138 style
+} LEDMX_CSTYPE;
 
 #pragma pack(push, 4)
 
