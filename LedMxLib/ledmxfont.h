@@ -14,7 +14,7 @@ names : I-SYST or its contributors may be used to endorse or
 promote products derived from this software without specific prior written 
 permission.
 
-For info or contributing contact : hoan at i-syst dot com
+For info or contributing contact : hnhoan at i-syst dot com
 
 THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND ANY
 EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
@@ -34,7 +34,10 @@ Modified by          Date              Description
 #define __LEDMXFONT_H__
 
 #include <stdint.h>
+
+#if defined(__AVR__)
 #include <avr/pgmspace.h>
+#endif
 
 typedef struct {
   int Width;		// in bits

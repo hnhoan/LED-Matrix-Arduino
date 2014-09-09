@@ -39,8 +39,10 @@ typedef struct {
   int  WrPin;
   int  RdPin;
   int  DataPin;
+  int  EnPin;
   int  CsPins[LEDMX_MAX_ADDRPIN];
   int  NbCsPins;				// Total number of CS pins used
+  LEDMX_CSTYPE CsType;
 } IODEV;
 
 IODEV g_IODev;
@@ -65,19 +67,24 @@ void LedMxIOInit(LEDMXDEV *pLedMxDev, LEDMXCFG *pCfg)
     pinMode(pdev->DataPin, OUTPUT);
     digitalWrite(pdev->DataPin, HIGH);
     
+    pdev->EnPin = pcfg->EnPin;
+    pinMode(pdev->EnPin, OUTPUT);
+    digitalWrite(pdev->EnPin, HIGH);
+
+    pdev->CsType = pcfg->CsType;
+    
     for (i = 0; i < LEDMX_MAX_ADDRPIN; i++)
     {
         pdev->CsPins[i] = pcfg->CsPins[i];
         if (pdev->CsPins[i] >= 0)
         {
-            pinMode(pdev->CsPins[i], OUTPUT);
-            digitalWrite(pdev->CsPins[i], HIGH);
+            pinMode(pdev->CsPins[i], OUTPUT);            
+            digitalWrite(pdev->CsPins[i], LOW);
         }
     }
 
-//  pdev->EnPin = pcfg->EnPin;
 /*
-	for (int i = 0; i < LEDMX_MAX_ADDRPIN; i++)
+  for (int i = 0; i < LEDMX_MAX_ADDRPIN; i++)
 	{
 		if (pcfg->CsPorts[i] >= 0)
 		{
@@ -104,7 +111,28 @@ void LedMxStartTx(LEDMXDEV *pLedMxDev, int PanelAddr)
   // Make sure all R/W stopped & CS disabled
   digitalWrite(pdev->RdPin, HIGH);
   digitalWrite(pdev->WrPin, HIGH);
-  digitalWrite(pdev->CsPins[PanelAddr], LOW);
+  
+  if (pdev->CsType == LEDMX_CSTYPE_BIN)
+  {
+      digitalWrite(pdev->EnPin, HIGH);
+      for (i = 0; i < pdev->NbCsPins; i++)
+      {
+          if (pdev->CsPins[i] >= 0)
+          {
+              if (PanelAddr & 1)
+                  digitalWrite(pdev->CsPins[i], HIGH);
+              else
+                  digitalWrite(pdev->CsPins[i], LOW);                  
+          }
+          PanelAddr >>= 1;
+      }
+      digitalWrite(pdev->EnPin, LOW);      
+  }
+  else
+  {
+      digitalWrite(pdev->CsPins[PanelAddr], LOW);
+      
+  }
   	
   //delay(2);
 }
@@ -139,11 +167,18 @@ void LedMxStopTx(LEDMXDEV *pLedMxDev)
 
   digitalWrite(pdev->WrPin, HIGH);
 
-  for (i = 0; i < pdev->NbCsPins; i++)
+  if (pdev->CsType == LEDMX_CSTYPE_BIN)
   {
-    if (pdev->CsPins[i] >= 0)
-      digitalWrite(pdev->CsPins[i], HIGH);
+      for (i = 0; i < pdev->NbCsPins; i++)
+      {
+        if (pdev->CsPins[i] >= 0)
+          digitalWrite(pdev->CsPins[i], HIGH);
+      }
+    digitalWrite(pdev->EnPin, HIGH);
   }
+  else
+    digitalWrite(pdev->EnPin, LOW);
+
 }
 
 

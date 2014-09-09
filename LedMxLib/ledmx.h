@@ -16,6 +16,11 @@ struct _LedMxIOCfg {
 
 4 functions implementation for I/O control
 
+void LedMxIOInit(LEDMXDEV *pLedMxDev, LEDMXCFG *pCfg);
+void LedMxStartTx(LEDMXDEV *pDev, int PanelAddr);
+void LedMxStopTx(LEDMXDEV *pDev);
+void LedMxTxData(LEDMXDEV *pDev, uint32_t Data, int NbBits);
+
 
 Copyright (c) 2011, I-SYST inc., all rights reserved
 
@@ -77,6 +82,11 @@ typedef enum {
 	LEDMXPRTMODE_SCROLLRIGHT
 } LEDMXPRTMODE;
 
+// CS mapping type
+typedef enum {
+  LEDMX_CSTYPE_GPIO, 		// Direct map to GPIO pin
+  LEDMX_CSTYPE_BIN		// Through a binary decoder, i.e. using 74AHCT138 style
+} LEDMX_CSTYPE;
 
 #pragma pack(push, 4)
 

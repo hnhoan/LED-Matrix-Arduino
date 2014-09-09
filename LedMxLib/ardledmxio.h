@@ -3,7 +3,8 @@ File   : ardledmxio.h
 
 Author : Hoang Nguyen Hoan          Aug. 15, 2013
 
-Desc   : This is platform specific I/O control interface for LED Matrix Control
+Desc   : This is platform specific I/O control interface for 
+         IDM-LMX3208 series LED matrix display
 
 Copyright (c) 2011, I-SYST inc., all rights reserved
 

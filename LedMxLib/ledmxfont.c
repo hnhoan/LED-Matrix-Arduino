@@ -14,7 +14,7 @@ names : I-SYST or its contributors may be used to endorse or
 promote products derived from this software without specific prior written
 permission.
 
-For info or contributing contact : hoan at i-syst dot com
+For info or contributing contact : hnhoan at i-syst dot com
 
 THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND ANY
 EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -30,7 +30,6 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ----------------------------------------------------------------------------
 Modified by          Date              Description
 ----------------------------------------------------------------------------*/
-#include <avr/pgmspace.h>
 #include "ledmxfont.h"
 
 const LEDMXFONT_BITMAP g_FontBitmap[256] PROGMEM = {

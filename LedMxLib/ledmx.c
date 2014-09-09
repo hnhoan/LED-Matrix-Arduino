@@ -38,11 +38,6 @@ Modified by          Date              Description
 #include "istddef.h"
 #include "ledmx.h"
 #include "ledmxfont.h"
-/*
-#ifndef min
-#define min(x, y)	((x) < (y) ? (x) : (y))
-#endif
-*/
 
 void LedMxPrintAt(LEDMXDEV *pDev, int col, const char *pStr)
 {
@@ -53,7 +48,6 @@ void LedMxPrintAt(LEDMXDEV *pDev, int col, const char *pStr)
 	uint8_t *data;
 	int w;
 	int len = strlen(pStr);
-        LEDMXFONT_BITMAP tfont;
                 
 	if (col > 0)
 	{
@@ -77,9 +71,15 @@ void LedMxPrintAt(LEDMXDEV *pDev, int col, const char *pStr)
 	i = 0;
 	do {
 		uint8_t fidx = (uint8_t)pStr[i];
-		LEDMXFONT_BITMAP *font = NULL;//&pDev->pFont[fidx];
-                memcpy_P(&tfont, &pDev->pFont[fidx], sizeof(LEDMXFONT_BITMAP));
-                font = &tfont;
+		LEDMXFONT_BITMAP const *font = &pDev->pFont[fidx];
+
+#ifdef __AVR__
+	        LEDMXFONT_BITMAP tfont;
+
+            memcpy_P(&tfont, &pDev->pFont[fidx], sizeof(LEDMXFONT_BITMAP));
+
+            font = &tfont;
+#endif
 
 		if (font->Width <= 0)
 		{
@@ -159,7 +159,7 @@ void LedMxPrintCenter(LEDMXDEV *pDev, const char *pStr)
 	LedMxPrintAt(pDev, col, pStr);
 }
 
-char s_Buffer[512] = {0,};// __attribute__ ((section(".RAMAHB")));
+static char s_Buffer[512] = {0,};// __attribute__ ((section(".RAMAHB")));
 
 void LedMxvPrintf(LEDMXDEV *pDev, LEDMXPRTMODE Mode, const char *pFormat, va_list vl)
 {
@@ -227,7 +227,11 @@ int LedMxPixStrLen(LEDMXDEV *pDev, const char *pStr)
 	for (i = 0; i < strlen(pStr); i++)
 	{
 		uint8_t fidx = pStr[i];
+#ifdef __AVR__
 		len += pgm_read_word_near(&pDev->pFont[fidx].Width);
+#else
+		len += pDev->pFont[fidx].Width;
+#endif
 	}
 
 	return len;
@@ -322,24 +326,25 @@ void LedMxInit(LEDMXDEV *pDev, LEDMXCFG *pCfg)
 	memcpy(pDev->PanelAddr, pCfg->PanelAddr, sizeof(pDev->PanelAddr));
 
 	// This loop is a patch for now.  Revise this code is required
-	for (i = 0; i < LEDMX_MAX_PANEL; i++)
+	for (i = 0; i < LEDMX_MAX_PANEL; i++) //pDev->NbPanel; i++)
 	{
-		LedMxCmd(pDev, LEDMX_CMD_SYSDIS, pCfg->PanelAddr[i]);
+        LedMxCmd(pDev, LEDMX_CMD_SYSDIS, pCfg->PanelAddr[i]);
 		// NOTE : 	Put all display in slave mode. By default master will generate clock
 		//			it could conflict with unused display is in system
 		LedMxCmd(pDev, LEDMX_CMD_SLAVE_MODE, pCfg->PanelAddr[i]);
 	}
 
-	for (i = 0; i < pDev->NbPanel; i++)
+	for (i = 0; i < LEDMX_MAX_PANEL; i++)//pDev->NbPanel; i++)
 	{
 		panelno = pCfg->PanelAddr[i];
 		LedMxCmd(pDev, LEDMX_CMD_SYSDIS, panelno);
 		LedMxCmd(pDev, LEDMX_CMD_NMOS_COM8, panelno);
 
-		if ((i & 3) == 0)  // Master at every 4 displays
+		//if ((panelno & 3) == 0)  // Master at every 4 displays
+		if (i == 0)
 			LedMxCmd(pDev, LEDMX_CMD_RC_MASTER, panelno);
 		else
-			LedMxCmd(pDev, LEDMX_CMD_SLAVE_MODE, panelno);
+		    LedMxCmd(pDev, LEDMX_CMD_SLAVE_MODE, panelno);
 		LedMxCmd(pDev, LEDMX_CMD_SYSEN, panelno);
 		LedMxCmd(pDev, LEDMX_CMD_BLINKOFF, panelno);
 		LedMxCmd(pDev, LEDMX_CMD_LEDON, panelno);
@@ -348,7 +353,7 @@ void LedMxInit(LEDMXDEV *pDev, LEDMXCFG *pCfg)
 
 	if (pCfg->pFont == NULL || pCfg->FontLen <= 0)
 	{
-		pDev->FontLen = pgm_read_word(&g_FontBitmapSize);
+		pDev->FontLen = g_FontBitmapSize;
 		pDev->pFont = g_FontBitmap;
 	}
 	else
