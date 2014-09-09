@@ -340,8 +340,8 @@ void LedMxInit(LEDMXDEV *pDev, LEDMXCFG *pCfg)
 		LedMxCmd(pDev, LEDMX_CMD_SYSDIS, panelno);
 		LedMxCmd(pDev, LEDMX_CMD_NMOS_COM8, panelno);
 
-		//if ((panelno & 3) == 0)  // Master at every 4 displays
-		if (i == 0)
+		if ((panelno & 3) == 0)  // Master display with switch set to 1
+		//if (i == 0)
 			LedMxCmd(pDev, LEDMX_CMD_RC_MASTER, panelno);
 		else
 		    LedMxCmd(pDev, LEDMX_CMD_SLAVE_MODE, panelno);
