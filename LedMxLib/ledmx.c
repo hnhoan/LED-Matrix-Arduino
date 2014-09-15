@@ -74,11 +74,11 @@ void LedMxPrintAt(LEDMXDEV *pDev, int col, const char *pStr)
 		LEDMXFONT_BITMAP const *font = &pDev->pFont[fidx];
 
 #ifdef __AVR__
-	        LEDMXFONT_BITMAP tfont;
+	    LEDMXFONT_BITMAP tfont;
 
-            memcpy_P(&tfont, &pDev->pFont[fidx], sizeof(LEDMXFONT_BITMAP));
+        memcpy_P(&tfont, &pDev->pFont[fidx], sizeof(LEDMXFONT_BITMAP));
 
-            font = &tfont;
+        font = &tfont;
 #endif
 
 		if (font->Width <= 0)
@@ -105,7 +105,7 @@ void LedMxPrintAt(LEDMXDEV *pDev, int col, const char *pStr)
 			paneladdr = pDev->PanelAddr[panelidx];
 			LedMxWriteRam(pDev, 0, data, col, paneladdr);
 			addr += w << 1;
-			col = 0;
+			//col = 0;
 			i++;
 			continue;
 		}
@@ -249,7 +249,7 @@ void LedMxSetRam(LEDMXDEV *pDev, unsigned RamAddr, char Data, int Len, int Panel
 	uint32_t d;
         int i;
         
-	if (RamAddr >= 0x80)
+	if (RamAddr >= 64) //0x80)
 		return;
 
 	while (RamAddr < 0 && Len > 0)
@@ -267,7 +267,7 @@ void LedMxSetRam(LEDMXDEV *pDev, unsigned RamAddr, char Data, int Len, int Panel
 	d = 0x280 | (RamAddr & 0x7f);
 	LedMxTxData(pDev, d, 10);
 
-	for (i = 0; i < Len && RamAddr < 0x80; i++)
+	for (i = 0; i < Len && RamAddr < 64; i++)	//0x80; i++)
 	{
 		LedMxTxData(pDev, Data, 8);
 		RamAddr += 2;
@@ -281,7 +281,7 @@ void LedMxWriteRam(LEDMXDEV *pDev, unsigned RamAddr, uint8_t const *pData, int L
 	uint32_t d;
         int i;
 
-	if (RamAddr >= 0x80)
+	if (RamAddr >= 64)	//0x80)
 		return;
 
 	while (RamAddr < 0 && Len > 0)
@@ -301,7 +301,7 @@ void LedMxWriteRam(LEDMXDEV *pDev, unsigned RamAddr, uint8_t const *pData, int L
 	d = 0x280 | (RamAddr & 0x7f);// | *pData;
 	LedMxTxData(pDev, d, 10);
 
-	for (i = 0; i < Len && RamAddr < 0x80; i++)
+	for (i = 0; i < Len && RamAddr < 64; i++) //0x80; i++)
 	{
 		LedMxTxData(pDev, *pData, 8);
 		RamAddr += 2;

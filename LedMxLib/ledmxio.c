@@ -105,80 +105,74 @@ void LedMxIOInit(LEDMXDEV *pLedMxDev, LEDMXCFG *pCfg)
 
 void LedMxStartTx(LEDMXDEV *pLedMxDev, int PanelAddr)
 {
-  int i;
-  IODEV *pdev = (IODEV *)pLedMxDev->pIODev;
+  	int i;
+  	IODEV *pdev = (IODEV *)pLedMxDev->pIODev;
 
-  // Make sure all R/W stopped & CS disabled
-  digitalWrite(pdev->RdPin, HIGH);
-  digitalWrite(pdev->WrPin, HIGH);
+  	// Make sure all R/W stopped & CS disabled
+  	digitalWrite(pdev->RdPin, HIGH);
+  	digitalWrite(pdev->WrPin, HIGH);
   
-  if (pdev->CsType == LEDMX_CSTYPE_BIN)
-  {
-      digitalWrite(pdev->EnPin, HIGH);
-      for (i = 0; i < pdev->NbCsPins; i++)
-      {
-          if (pdev->CsPins[i] >= 0)
-          {
-              if (PanelAddr & 1)
-                  digitalWrite(pdev->CsPins[i], HIGH);
-              else
-                  digitalWrite(pdev->CsPins[i], LOW);                  
-          }
-          PanelAddr >>= 1;
-      }
-      digitalWrite(pdev->EnPin, LOW);      
-  }
-  else
-  {
-      digitalWrite(pdev->CsPins[PanelAddr], LOW);
+  	if (pdev->CsType == LEDMX_CSTYPE_BIN)
+  	{
+      	digitalWrite(pdev->EnPin, HIGH);
+      	for (i = 0; i < pdev->NbCsPins; i++)
+      	{
+          	if (pdev->CsPins[i] >= 0)
+          	{
+              	if (PanelAddr & 1)
+                  	digitalWrite(pdev->CsPins[i], HIGH);
+              	else
+                  	digitalWrite(pdev->CsPins[i], LOW);                  
+          	}
+          	PanelAddr >>= 1;
+      	}
+      	digitalWrite(pdev->EnPin, LOW);      
+  	}
+  	else
+  	{
+      	digitalWrite(pdev->CsPins[PanelAddr], LOW);
       
-  }
+  	}
   	
   //delay(2);
 }
 
 void LedMxTxData(LEDMXDEV *pLedMxDev, uint32_t Data, int NbBits)
 {
-  uint32_t mask = 1 << (NbBits - 1);
-  IODEV *pdev = (IODEV *)pLedMxDev->pIODev;
+  	uint32_t mask = 1 << (NbBits - 1);
+  	IODEV *pdev = (IODEV *)pLedMxDev->pIODev;
 
-  while (mask)
-  {
-    digitalWrite(pdev->WrPin, LOW);
-    if (Data & mask)
-	digitalWrite(pdev->DataPin, 1);
-    else
-	digitalWrite(pdev->DataPin, 0);
+  	while (mask)
+  	{
+    	digitalWrite(pdev->WrPin, LOW);
+    	if (Data & mask)
+			digitalWrite(pdev->DataPin, 1);
+    	else
+			digitalWrite(pdev->DataPin, 0);
 
-//    delay(1);
-  		
-    digitalWrite(pdev->WrPin, HIGH);
-    
-//    delay(1);
-    		
-    mask >>= 1;
-  }
+    	digitalWrite(pdev->WrPin, HIGH);
+    	mask >>= 1;
+  	}
 }
 
 void LedMxStopTx(LEDMXDEV *pLedMxDev)
 {
-  int i;
-  IODEV *pdev = (IODEV *)pLedMxDev->pIODev;
+  	int i;
+  	IODEV *pdev = (IODEV *)pLedMxDev->pIODev;
 
-  digitalWrite(pdev->WrPin, HIGH);
+  	digitalWrite(pdev->WrPin, HIGH);
 
-  if (pdev->CsType == LEDMX_CSTYPE_BIN)
-  {
-      for (i = 0; i < pdev->NbCsPins; i++)
-      {
-        if (pdev->CsPins[i] >= 0)
-          digitalWrite(pdev->CsPins[i], HIGH);
-      }
-    digitalWrite(pdev->EnPin, HIGH);
-  }
-  else
-    digitalWrite(pdev->EnPin, LOW);
-
+  	if (pdev->CsType == LEDMX_CSTYPE_BIN)
+  	{
+/*      	for (i = 0; i < pdev->NbCsPins; i++)
+      	{
+        	if (pdev->CsPins[i] >= 0)
+          	digitalWrite(pdev->CsPins[i], HIGH);
+      	}*/
+    	digitalWrite(pdev->EnPin, HIGH);
+  	}
+  	else
+    	digitalWrite(pdev->EnPin, LOW);
 }
 
 

@@ -29,8 +29,8 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ----------------------------------------------------------------------------
-Modified by          Date              Description
-
+Modified by          Date           Description
+Hoan				Sep. 14, 2014	Add support for IBB-LMXBLUE with 16 displays
 ----------------------------------------------------------------------------*/
 
 #ifndef __LEDMXIO_H__
@@ -44,6 +44,7 @@ Modified by          Date              Description
 #define LMXSHIELD_WR                    7
 #define LMXSHIELD_DATA                  6
 #define LMXSHIELD_EN                    5
+#define LMXSHIELD_AD3                   9	// Avail on IBB-LMXBLUE for 16 displays
 #define LMXSHIELD_AD2                   4
 #define LMXSHIELD_AD1                   3
 #define LMXSHIELD_AD0                   2
