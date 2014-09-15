@@ -3,7 +3,7 @@ File   : ledmx.h
 
 Author : Hoang Nguyen Hoan          Feb. 28, 2011
 
-Desc   : LED Matrix control
+Desc   : LED Matrix control for IDM-LMX3208 series display
 
 This module requires each platform to implement the following :
 
@@ -11,7 +11,7 @@ A data structure to define I/O pin configurations, this structure must be
 defined in the ledmxio.h
 
 struct _LedMxIOCfg {
-
+...
 };
 
 4 functions implementation for I/O control
@@ -82,16 +82,16 @@ typedef enum {
 
 // CS mapping type
 typedef enum {
-  LEDMX_CSTYPE_GPIO, 	// Direct map to GPIO pin
-  LEDMX_CSTYPE_BIN,		// Through a binary decoder, i.e. using 74AHCT138 style
-  LEDMX_CSTYPE_SER		// Through serial shift register
+	LEDMX_CSTYPE_GPIO, 		// Direct map to GPIO pin
+	LEDMX_CSTYPE_BIN,		// Through a binary decoder, i.e. using 74AHCT138 style
+    LEDMX_CSTYPE_SER		// Through serial shift register
 } LEDMX_CSTYPE;
 
 #pragma pack(push, 4)
 
 // LED matrix data
 typedef struct {
-    void *pIOCfg;	// Pointer to private I/O config data (platform dependent)
+	void *pIOCfg;	// Pointer to private I/O config data (platform dependent)
     int NbPanel;
     int PanelAddr[LEDMX_MAX_PANEL];
     int FontLen;
@@ -99,8 +99,8 @@ typedef struct {
 } LEDMXCFG;
 
 typedef struct {
-    int	NbPanel;		// Max number of panels installed
-    int PanelAddr[8];	//
+	int	NbPanel;		// Max number of panels installed
+	int PanelAddr[LEDMX_MAX_PANEL];	//
     int FontLen;
     LEDMXFONT_BITMAP const *pFont;
     void *pIODev;		// Pointer to platform specific I/O control
@@ -129,7 +129,7 @@ void LedMxWriteRam(LEDMXDEV *pDev, unsigned Addr, uint8_t const *pData, int Len,
 // Private platform dependent impletmentation
 void LedMxIOInit(LEDMXDEV *pLedMxDev, LEDMXCFG *pCfg);
 void LedMxStartTx(LEDMXDEV *pDev, int PanelAddr);
-void LedMxStopTx(LEDMXDEV *pDev);
+void LedMxStopTx(LEDMXDEV *pDev, int PanelAddr);
 void LedMxTxData(LEDMXDEV *pDev, uint32_t Data, int NbBits);
 
 #ifdef __cplusplus
@@ -142,11 +142,8 @@ public:
 		vDevData.FontLen = g_FontBitmapSize;
 		vDevData.pFont = (LEDMXFONT_BITMAP*)g_FontBitmap;
 	}
-	virtual ~LedMx() {
-//		if (vDevData.pEnPort)
-//			vDevData.pEnPort->FIOCLR = vDevData.EnPin;
-	}
-	LedMx(LedMx&);	// ctor not allowed
+	virtual ~LedMx() {}
+	LedMx(LedMx&);	// copy ctor not allowed
 
 	void Init(LEDMXCFG &Cfg) { LedMxInit(&vDevData, &Cfg); }
 	void Cmd(int CmdVal, int PanelAddr) { LedMxCmd(&vDevData, CmdVal, PanelAddr); }
@@ -175,7 +172,7 @@ public:
 
 protected:
 	void StartTx(int PanelAddr) { LedMxStartTx(&vDevData, PanelAddr); }
-	void StopTx() { LedMxStopTx(&vDevData); }
+	void StopTx(int PanelAddr) { LedMxStopTx(&vDevData, PanelAddr); }
 	void TxData(uint32_t Data, int NbBits) { LedMxTxData(&vDevData, Data, NbBits); }
 
 private:

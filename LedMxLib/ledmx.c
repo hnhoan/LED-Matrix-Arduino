@@ -3,7 +3,7 @@ File   : ledmx.cpp
 
 Author : Hoang Nguyen Hoan          Feb. 28, 2011
 
-Desc   : LED Matrix control
+Desc   : LED Matrix control for IDM-LMX3208 series display
 
 Copyright (c) 2011, I-SYST inc., all rights reserved
 
@@ -241,13 +241,13 @@ void LedMxCmd(LEDMXDEV *pDev, int CmdVal, int PanelAddr)
 {
 	LedMxStartTx(pDev, PanelAddr);
 	LedMxTxData(pDev, CmdVal, 12);
-	LedMxStopTx(pDev);
+	LedMxStopTx(pDev, PanelAddr);
 }
 
 void LedMxSetRam(LEDMXDEV *pDev, unsigned RamAddr, char Data, int Len, int PanelAddr)
 {
 	uint32_t d;
-        int i;
+    int i;
         
 	if (RamAddr >= 64) //0x80)
 		return;
@@ -273,13 +273,13 @@ void LedMxSetRam(LEDMXDEV *pDev, unsigned RamAddr, char Data, int Len, int Panel
 		RamAddr += 2;
 	}
 
-	LedMxStopTx(pDev);
+	LedMxStopTx(pDev, PanelAddr);
 }
 
 void LedMxWriteRam(LEDMXDEV *pDev, unsigned RamAddr, uint8_t const *pData, int Len, int PanelAddr)
 {
 	uint32_t d;
-        int i;
+    int i;
 
 	if (RamAddr >= 64)	//0x80)
 		return;
@@ -308,7 +308,7 @@ void LedMxWriteRam(LEDMXDEV *pDev, unsigned RamAddr, uint8_t const *pData, int L
 		pData++;
 	}
 
-	LedMxStopTx(pDev);
+	LedMxStopTx(pDev, PanelAddr);
 }
 
 void LedMxInit(LEDMXDEV *pDev, LEDMXCFG *pCfg)
@@ -334,7 +334,7 @@ void LedMxInit(LEDMXDEV *pDev, LEDMXCFG *pCfg)
 		LedMxCmd(pDev, LEDMX_CMD_SLAVE_MODE, pCfg->PanelAddr[i]);
 	}
 
-	for (i = 0; i < LEDMX_MAX_PANEL; i++)//pDev->NbPanel; i++)
+	for (i = 0; i < LEDMX_MAX_PANEL; i++) // pDev->NbPanel; i++)
 	{
 		panelno = pCfg->PanelAddr[i];
 		LedMxCmd(pDev, LEDMX_CMD_SYSDIS, panelno);

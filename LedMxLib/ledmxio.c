@@ -155,7 +155,7 @@ void LedMxTxData(LEDMXDEV *pLedMxDev, uint32_t Data, int NbBits)
   	}
 }
 
-void LedMxStopTx(LEDMXDEV *pLedMxDev)
+void LedMxStopTx(LEDMXDEV *pLedMxDev, int PanelAddr)
 {
   	int i;
   	IODEV *pdev = (IODEV *)pLedMxDev->pIODev;
@@ -164,15 +164,10 @@ void LedMxStopTx(LEDMXDEV *pLedMxDev)
 
   	if (pdev->CsType == LEDMX_CSTYPE_BIN)
   	{
-/*      	for (i = 0; i < pdev->NbCsPins; i++)
-      	{
-        	if (pdev->CsPins[i] >= 0)
-          	digitalWrite(pdev->CsPins[i], HIGH);
-      	}*/
     	digitalWrite(pdev->EnPin, HIGH);
   	}
   	else
-    	digitalWrite(pdev->EnPin, LOW);
+      	digitalWrite(pdev->CsPins[PanelAddr], HIGH);
 }
 
 
